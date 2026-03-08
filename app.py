@@ -83,7 +83,6 @@ def seed_data():
                 date_limite=date.today() + timedelta(days=5))
     db.session.add_all([d1, d2])
     db.session.commit()
-
+app = create_app()
 if __name__ == '__main__':
-    app = create_app()
     app.run(debug=True)
