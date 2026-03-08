@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Utilisateurs — EcoleCom{% endblock %}
+{% block page_title %}Gestion des utilisateurs{% endblock %}
+{% block page_subtitle %}{{ users|length }} utilisateurs enregistrés{% endblock %}
+{% block topbar_actions %}<button class="btn btn-primary btn-sm" onclick="openModal('modal-add')">➕ Nouvel utilisateur</button>{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="table-container">
+    <table>
+      <thead><tr><th>Nom</th><th>Email</th><th>Rôle</th><th>Créé le</th><th>Actions</th></tr></thead>
+      <tbody>
+      {% for u in users %}
+      <tr>
+        <td>
+          <div style="display:flex;align-items:center;gap:9px">
+            <div class="avatar" style="width:30px;height:30px;font-size:10px">{{ u.initiales() }}</div>
+            <strong style="font-size:13px">{{ u.prenom }} {{ u.nom }}</strong>
+          </div>
+        </td>
+        <td style="color:var(--gray-500);font-size:12.5px">{{ u.email }}</td>
+        <td>{% set c={'direction':'badge-danger','professeur':'badge-primary','parent':'badge-success','eleve':'badge-gray'} %}<span class="badge {{ c.get(u.role,'badge-gray') }}">{{ u.role_label() }}</span></td>
+        <td style="font-size:12.5px;color:var(--gray-500)">{{ u.created_at.strftime('%d/%m/%Y') }}</td>
+        <td>
+          {% if u.id!=current_user.id %}
+          <form method="POST" action="{{ url_for('admin.del_user', id=u.id) }}" onsubmit="return confirmDelete('Supprimer cet utilisateur ?')">
+            <button class="btn btn-danger btn-xs">🗑️ Supprimer</button>
+          </form>
+          {% else %}<span style="font-size:11.5px;color:var(--gray-400)">Compte actif</span>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-add">
+  <div class="modal">
+    <div class="modal-header"><h3>➕ Nouvel utilisateur</h3><button class="btn-close" onclick="closeModal('modal-add')">×</button></div>
+    <form method="POST" action="{{ url_for('admin.add_user') }}">
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Prénom</label><input type="text" name="prenom" class="form-control" required></div>
+          <div class="form-group"><label class="form-label">Nom</label><input type="text" name="nom" class="form-control" required></div>
+        </div>
+        <div class="form-group"><label class="form-label">Email</label><input type="email" name="email" class="form-control" required></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Rôle</label><select name="role" class="form-control"><option value="parent">Parent</option><option value="professeur">Professeur</option><option value="direction">Direction</option></select></div>
+          <div class="form-group"><label class="form-label">Mot de passe</label><input type="text" name="password" class="form-control" value="ecole2024"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" onclick="closeModal('modal-add')">Annuler</button>
+        <button type="submit" class="btn btn-primary">➕ Créer</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

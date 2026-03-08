@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% block title %}Tableau de bord — EcoleCom{% endblock %}
+{% block page_title %}Tableau de bord{% endblock %}
+{% block page_subtitle %}Bonjour {{ current_user.prenom }} <i data-lucide="wave"></i> — {{ today.strftime('%d/%m/%Y') }}{% endblock %}
+{% block topbar_actions %}
+{% if current_user.role == 'direction' %}
+<a href="{{ url_for('annonces.index') }}"><button class="btn btn-primary btn-sm"><i data-lucide="plus"></i> Nouvelle annonce</button></a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<!-- Quick Access -->
+<div class="quick-access">
+  <div class="quick-access-header">
+    <h3>Accès rapide</h3>
+    <span style="font-size:11px;color:var(--gray-400)">Raccourcis</span>
+  </div>
+  <div class="quick-access-grid">
+    <a href="{{ url_for('messages.index') }}">
+      <div class="quick-card">
+        <div class="quick-icon"><i data-lucide="mail"></i></div>
+        <div class="quick-card-title">Messagerie</div>
+        <div class="quick-card-meta">{{ unread_count() }} non lus</div>
+      </div>
+    </a>
+    <a href="{{ url_for('annonces.index') }}">
+      <div class="quick-card">
+        <div class="quick-icon"><i data-lucide="megaphone"></i></div>
+        <div class="quick-card-title">Annonces</div>
+        <div class="quick-card-meta">Voir tout</div>
+      </div>
+    </a>
+    {% if current_user.role != 'direction' %}
+    <a href="{{ url_for('devoirs.index') }}">
+      <div class="quick-card">
+        <div class="quick-icon"><i data-lucide="book-open"></i></div>
+        <div class="quick-card-title">Devoirs</div>
+        <div class="quick-card-meta">Voir tout</div>
+      </div>
+    </a>
+    {% endif %}
+    <a href="{{ url_for('absences.index') }}">
+      <div class="quick-card">
+        <div class="quick-icon"><i data-lucide="clipboard"></i></div>
+        <div class="quick-card-title">Absences</div>
+        <div class="quick-card-meta">Suivi</div>
+      </div>
+    </a>
+    <a href="{{ url_for('rdv.index') }}">
+      <div class="quick-card">
+        <div class="quick-icon"><i data-lucide="calendar"></i></div>
+        <div class="quick-card-title">Rendez-vous</div>
+        <div class="quick-card-meta">Planning</div>
+      </div>
+    </a>
+    {% if current_user.role == 'direction' %}
+    <a href="{{ url_for('admin.users') }}">
+      <div class="quick-card">
+        <div class="quick-icon"><i data-lucide="users"></i></div>
+        <div class="quick-card-title">Utilisateurs</div>
+        <div class="quick-card-meta">Gestion</div>
+      </div>
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+{% if current_user.role == 'direction' %}
+  <div class="stat-card"><div class="stat-icon blue"><i data-lucide="users"></i></div><div><div class="stat-number">{{ stats.users }}</div><div class="stat-label">Utilisateurs</div></div></div>
+  <div class="stat-card"><div class="stat-icon green"><i data-lucide="backpack"></i></div><div><div class="stat-number">{{ stats.eleves }}</div><div class="stat-label">Élèves</div></div></div>
+  <div class="stat-card"><div class="stat-icon orange"><i data-lucide="megaphone"></i></div><div><div class="stat-number">{{ stats.annonces }}</div><div class="stat-label">Annonces</div></div></div>
+  <div class="stat-card"><div class="stat-icon purple"><i data-lucide="mail"></i></div><div><div class="stat-number">{{ stats.messages }}</div><div class="stat-label">Messages total</div></div></div>
+{% elif current_user.role == 'professeur' %}
+  <div class="stat-card"><div class="stat-icon blue"><i data-lucide="building-2"></i></div><div><div class="stat-number">{{ stats.classes }}</div><div class="stat-label">Classes</div></div></div>
+  <div class="stat-card"><div class="stat-icon purple"><i data-lucide="book-open"></i></div><div><div class="stat-number">{{ stats.devoirs }}</div><div class="stat-label">Devoirs publiés</div></div></div>
+  <div class="stat-card"><div class="stat-icon red"><i data-lucide="clipboard"></i></div><div><div class="stat-number">{{ stats.absences_today }}</div><div class="stat-label">Absences aujourd'hui</div></div></div>
+  <div class="stat-card"><div class="stat-icon orange"><i data-lucide="mail"></i></div><div><div class="stat-number">{{ stats.non_lus }}</div><div class="stat-label">Messages non lus</div></div></div>
+{% elif current_user.role == 'parent' %}
+  <div class="stat-card"><div class="stat-icon green"><i data-lucide="baby"></i></div><div><div class="stat-number">{{ stats.enfants }}</div><div class="stat-label">Enfant(s)</div></div></div>
+  <div class="stat-card"><div class="stat-icon red"><i data-lucide="clipboard"></i></div><div><div class="stat-number">{{ stats.absences }}</div><div class="stat-label">Absences</div></div></div>
+  <div class="stat-card"><div class="stat-icon orange"><i data-lucide="mail"></i></div><div><div class="stat-number">{{ stats.non_lus }}</div><div class="stat-label">Non lus</div></div></div>
+  <div class="stat-card"><div class="stat-icon blue"><i data-lucide="calendar"></i></div><div><div class="stat-number">{{ stats.rdvs }}</div><div class="stat-label">Rendez-vous</div></div></div>
+{% endif %}
+</div>
+
+<!-- Dashboard grid -->
+<div class="dashboard-grid">
+
+  <!-- Annonces -->
+  <div class="card">
+    <div class="card-header">
+      <h3><i data-lucide="megaphone"></i> Annonces récentes</h3>
+      <a href="{{ url_for('annonces.index') }}" class="btn btn-light btn-sm">Voir tout</a>
+    </div>
+    <div class="card-body" style="padding:14px 18px">
+      {% if not annonces %}
+      <div class="empty-state"><div class="empty-icon"><i data-lucide="inbox"></i></div><p>Aucune annonce</p></div>
+      {% else %}
+      {% for a in annonces %}
+      <div class="annonce-card {{ a.type }}">
+        <div class="annonce-header">
+          <div class="annonce-title">{{ a.titre }}</div>
+          <span class="badge badge-primary">{{ a.type }}</span>
+        </div>
+        <div class="annonce-content">{{ a.contenu[:100] }}…</div>
+        <div class="annonce-meta">Par {{ a.auteur.prenom }} {{ a.auteur.nom }}</div>
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="card">
+    <div class="card-header">
+      <h3><i data-lucide="mail"></i> Messages non lus</h3>
+      <a href="{{ url_for('messages.index') }}" class="btn btn-light btn-sm">Voir tout</a>
+    </div>
+    {% if not unread_msgs %}
+    <div class="card-body"><div class="empty-state"><div class="empty-icon"><i data-lucide="inbox"></i></div><p>Tout est lu !</p></div></div>
+    {% else %}
+    <div class="message-list">
+      {% for m in unread_msgs %}
+      <a href="{{ url_for('messages.index', id=m.id) }}" class="message-item unread">
+        <div class="msg-avatar">{{ m.expediteur.initiales() }}</div>
+        <div class="msg-content">
+          <div class="msg-sender">{{ m.expediteur.prenom }} {{ m.expediteur.nom }}</div>
+          <div class="msg-subject">{{ m.sujet or m.contenu[:45] }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Devoirs -->
+  {% if current_user.role != 'direction' %}
+  <div class="card">
+    <div class="card-header">
+      <h3><i data-lucide="book-open"></i> Devoirs à rendre</h3>
+      <a href="{{ url_for('devoirs.index') }}" class="btn btn-light btn-sm">Voir tout</a>
+    </div>
+    <div class="card-body" style="padding:14px 18px">
+      {% if not devoirs %}
+      <div class="empty-state"><div class="empty-icon"><i data-lucide="check"></i></div><p>Aucun devoir en cours</p></div>
+      {% else %}
+      {% for d in devoirs %}
+      {% set diff = (d.date_limite - today).days %}
+      <div class="devoir-item">
+        <div class="devoir-icon"><i data-lucide="file-text"></i></div>
+        <div class="devoir-info">
+          <div class="devoir-title">{{ d.titre }}</div>
+          <div class="devoir-meta">{{ d.matiere }} — {{ d.classe }}</div>
+        </div>
+        <div class="devoir-deadline {{ 'urgent' if diff<=2 else 'normal' }}">
+          <i data-lucide="circle"></i> {{ d.date_limite.strftime('%d/%m') }}
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- RDV -->
+  <div class="card">
+    <div class="card-header">
+      <h3><i data-lucide="calendar"></i> Prochains rendez-vous</h3>
+      <a href="{{ url_for('rdv.index') }}" class="btn btn-light btn-sm">Voir tout</a>
+    </div>
+    <div class="card-body" style="padding:14px 18px">
+      {% if not rdvs %}
+      <div class="empty-state"><div class="empty-icon"><i data-lucide="calendar"></i></div><p>Aucun rendez-vous</p></div>
+      {% else %}
+      {% for r in rdvs %}
+      <div style="display:flex;align-items:center;gap:12px;padding:11px;border:1px solid var(--gray-200);border-radius:var(--radius);margin-bottom:8px;background:var(--white)">
+        <div style="text-align:center;background:var(--blue-light);border-radius:var(--radius-sm);padding:7px 10px;min-width:44px">
+          <div style="font-size:17px;font-weight:800;color:var(--blue);line-height:1">{{ r.date_heure.strftime('%d') }}</div>
+          <div style="font-size:9px;font-weight:700;color:var(--blue);text-transform:uppercase">{{ r.date_heure.strftime('%b') }}</div>
+        </div>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:13px">{% if current_user.role=='parent' %}Prof. {{ r.professeur.prenom }} {{ r.professeur.nom }}{% else %}{{ r.parent.prenom }} {{ r.parent.nom }}{% endif %}</div>
+          <div style="font-size:11px;color:var(--gray-400)">{{ r.date_heure.strftime('%H:%M') }}</div>
+        </div>
+        <span class="badge {{ 'badge-warning' if r.statut=='en_attente' else 'badge-success' if r.statut=='confirme' else 'badge-danger' }}">{{ r.statut }}</span>
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

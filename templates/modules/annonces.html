@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Annonces — EcoleCom{% endblock %}
+{% block page_title %}Annonces{% endblock %}
+{% block page_subtitle %}Informations et événements de l'école{% endblock %}
+{% block topbar_actions %}
+{% if current_user.role == 'direction' %}<button class="btn btn-primary btn-sm" onclick="openModal('modal-add')">➕ Nouvelle annonce</button>{% endif %}
+{% endblock %}
+{% block content %}
+<div class="filters-bar">
+  <a href="{{ url_for('annonces.index') }}"><button class="filter-btn {{ 'active' if not type_filter }}">Toutes</button></a>
+  {% for t,l in [('general','Général'),('evenement','Événement'),('reunion','Réunion'),('sortie','Sortie'),('vacances','Vacances')] %}
+  <a href="{{ url_for('annonces.index', type=t) }}"><button class="filter-btn {{ 'active' if type_filter==t }}">{{ l }}</button></a>
+  {% endfor %}
+</div>
+{% if not annonces %}
+<div class="empty-state card" style="padding:48px"><div class="empty-icon">📭</div><p>Aucune annonce</p></div>
+{% else %}
+{% set icons = {'general':'📢','evenement':'🎉','reunion':'👥','sortie':'🚌','vacances':'🏖️'} %}
+{% for a in annonces %}
+<div class="annonce-card {{ a.type }}">
+  <div class="annonce-header">
+    <div style="display:flex;align-items:center;gap:9px">
+      <span style="font-size:20px">{{ icons.get(a.type,'📢') }}</span>
+      <div class="annonce-title">{{ a.titre }}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:7px">
+      <span class="badge badge-primary">{{ a.type }}</span>
+      {% if current_user.role=='direction' %}
+      <form method="POST" action="{{ url_for('annonces.supprimer', id=a.id) }}" onsubmit="return confirmDelete('Supprimer cette annonce ?')">
+        <button class="btn btn-danger btn-xs">🗑️</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  <div class="annonce-content" style="margin-top:8px">{{ a.contenu }}</div>
+  {% if a.date_evenement %}<div style="margin-top:8px;font-size:12px;font-weight:600;color:var(--blue)">📅 {{ a.date_evenement.strftime('%d/%m/%Y') }}</div>{% endif %}
+  <div class="annonce-meta">Publié par {{ a.auteur.prenom }} {{ a.auteur.nom }}</div>
+</div>
+{% endfor %}
+{% endif %}
+{% if current_user.role=='direction' %}
+<div class="modal-overlay" id="modal-add">
+  <div class="modal">
+    <div class="modal-header"><h3>➕ Nouvelle annonce</h3><button class="btn-close" onclick="closeModal('modal-add')">×</button></div>
+    <form method="POST" action="{{ url_for('annonces.ajouter') }}">
+      <div class="modal-body">
+        <div class="form-group"><label class="form-label">Titre</label><input type="text" name="titre" class="form-control" required></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Type</label><select name="type" class="form-control">{% for t,l in [('general','Général'),('evenement','Événement'),('reunion','Réunion'),('sortie','Sortie'),('vacances','Vacances')] %}<option value="{{ t }}">{{ l }}</option>{% endfor %}</select></div>
+          <div class="form-group"><label class="form-label">Date (optionnel)</label><input type="date" name="date_evenement" class="form-control"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Contenu</label><textarea name="contenu" class="form-control" rows="4" required></textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" onclick="closeModal('modal-add')">Annuler</button>
+        <button type="submit" class="btn btn-primary">📢 Publier</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

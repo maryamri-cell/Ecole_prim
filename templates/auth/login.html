@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion — EcoleCom</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --blue:     #2563EB;
+      --blue-d:   #1D4ED8;
+      --blue-dd:  #1e3a8a;
+      --blue-l:   #EFF6FF;
+      --blue-m:   #DBEAFE;
+      --blue-g:   #60A5FA;
+      --green:    #10B981;
+      --orange:   #F59E0B;
+      --purple:   #8B5CF6;
+      --red:      #EF4444;
+      --g50:  #F9FAFB; --g100: #F3F4F6; --g200: #E5E7EB;
+      --g300: #D1D5DB; --g400: #9CA3AF; --g500: #6B7280;
+      --g600: #4B5563; --g700: #374151; --g800: #1F2937; --g900: #111827;
+      --white: #FFFFFF;
+      --fd: 'Sora', sans-serif;
+      --fb: 'Plus Jakarta Sans', sans-serif;
+    }
+    html, body { height: 100%; font-family: var(--fb); -webkit-font-smoothing: antialiased; overflow: hidden; }
+
+    /* ===== LAYOUT ===== */
+    .login-wrap {
+      display: flex; height: 100vh; width: 100%;
+    }
+
+    /* ===== LEFT PANEL ===== */
+    .lp-left {
+      flex: 1.1;
+      background: linear-gradient(145deg, #0f172a 0%, #1e3a8a 40%, #2563EB 80%, #3b82f6 100%);
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 48px;
+    }
+
+    /* Animated mesh background */
+    .lp-mesh {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 30%, rgba(99,102,241,0.35) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 80% 70%, rgba(16,185,129,0.2) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 50% 10%, rgba(245,158,11,0.15) 0%, transparent 60%);
+      animation: meshShift 10s ease-in-out infinite alternate;
+    }
+    @keyframes meshShift {
+      0%   { filter: hue-rotate(0deg) brightness(1); }
+      100% { filter: hue-rotate(15deg) brightness(1.08); }
+    }
+
+    /* Grid lines */
+    .lp-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    /* Floating particles */
+    .lp-particles { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+    .particle {
+      position: absolute; border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      animation: particleFloat linear infinite;
+    }
+    @keyframes particleFloat {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 0.6; }
+      100% { transform: translateY(-100px) scale(1); opacity: 0; }
+    }
+
+    /* Left top: logo */
+    .lp-logo {
+      position: relative; z-index: 10;
+      display: flex; align-items: center; gap: 12px;
+      animation: fadeDown 0.6s ease both;
+    }
+    .lp-logo-icon {
+      width: 42px; height: 42px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .lp-logo-name {
+      font-family: var(--fd); font-size: 20px; font-weight: 800;
+      color: white; letter-spacing: -0.02em;
+    }
+    .lp-logo-tag {
+      font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 500;
+    }
+
+    /* Left center: main visual */
+    .lp-visual {
+      position: relative; z-index: 10; flex: 1;
+      display: flex; flex-direction: column;
+      justify-content: center; gap: 32px;
+    }
+    .lp-headline {
+      font-family: var(--fd);
+      font-size: clamp(28px, 3vw, 40px);
+      font-weight: 800; color: white; line-height: 1.18;
+      letter-spacing: -0.03em;
+      animation: fadeUp 0.7s ease 0.15s both;
+    }
+    .lp-headline .hl {
+      background: linear-gradient(90deg, #fbbf24, #fb923c);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .lp-sub {
+      font-size: 15px; color: rgba(255,255,255,0.65);
+      line-height: 1.7; max-width: 380px;
+      animation: fadeUp 0.7s ease 0.25s both;
+    }
+
+    /* Dashboard 3D card */
+    .lp-card-3d {
+      perspective: 800px;
+      animation: fadeUp 0.9s ease 0.35s both;
+    }
+    .lp-dashboard-card {
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 18px; overflow: hidden;
+      transform: rotateY(-8deg) rotateX(4deg);
+      transition: transform 0.4s ease;
+      box-shadow: 30px 30px 80px rgba(0,0,0,0.4);
+    }
+    .lp-dashboard-card:hover {
+      transform: rotateY(-2deg) rotateX(1deg) scale(1.02);
+    }
+    .ldc-bar {
+      background: rgba(0,0,0,0.25); padding: 8px 14px;
+      display: flex; align-items: center; gap: 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .ldc-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .ldc-title { flex: 1; text-align: center; font-size: 10px; color: rgba(255,255,255,0.4); font-weight: 600; letter-spacing: 0.05em; }
+    .ldc-body { padding: 14px; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
+    .ldc-stat {
+      background: rgba(255,255,255,0.08); border-radius: 8px; padding: 10px 8px;
+      text-align: center; border: 1px solid rgba(255,255,255,0.1);
+    }
+    .ldc-num { font-family: var(--fd); font-size: 16px; font-weight: 800; color: white; }
+    .ldc-lbl { font-size: 7.5px; color: rgba(255,255,255,0.5); margin-top: 2px; font-weight: 500; }
+    .ldc-icon { font-size: 12px; margin-bottom: 4px; }
+    .ldc-row { padding: 0 14px 14px; display: flex; gap: 8px; }
+    .ldc-msg-card {
+      flex: 1; background: rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .ldc-msg-title { font-size: 8px; font-weight: 700; color: rgba(255,255,255,0.7); margin-bottom: 7px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .ldc-msg-item { display: flex; align-items: center; gap: 6px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .ldc-msg-item:last-child { border-bottom: none; }
+    .ldc-av { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 7px; font-weight: 700; color: white; flex-shrink: 0; }
+    .ldc-msg-name { font-size: 8px; font-weight: 600; color: rgba(255,255,255,0.8); }
+    .ldc-msg-sub  { font-size: 7px; color: rgba(255,255,255,0.4); }
+    .unread-dot { width: 5px; height: 5px; background: #60A5FA; border-radius: 50%; margin-left: auto; flex-shrink: 0; }
+
+    /* Floating badges on the card */
+    .lp-float-badge {
+      position: absolute; background: white; border-radius: 12px;
+      padding: 9px 14px; display: flex; align-items: center; gap: 9px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.8);
+      z-index: 20;
+    }
+    .lp-float-badge.fb1 {
+      top: 30%; right: -20px;
+      animation: floatRight 3s ease-in-out infinite;
+    }
+    .lp-float-badge.fb2 {
+      bottom: 28%; left: -16px;
+      animation: floatRight 3.5s ease-in-out infinite 1s;
+    }
+    @keyframes floatRight {
+      0%, 100% { transform: translateY(0) translateX(0); }
+      50% { transform: translateY(-7px) translateX(3px); }
+    }
+    .fb-icon { font-size: 18px; }
+    .fb-text-title { font-family: var(--fd); font-size: 11.5px; font-weight: 700; color: var(--g900); }
+    .fb-text-sub { font-size: 10px; color: var(--g400); margin-top: 1px; }
+    .fb-pill {
+      background: #d1fae5; color: #065f46;
+      font-size: 10px; font-weight: 700;
+      padding: 2px 7px; border-radius: 20px;
+    }
+
+    /* Left bottom: roles pills */
+    .lp-roles {
+      position: relative; z-index: 10;
+      display: flex; gap: 8px; flex-wrap: wrap;
+      animation: fadeUp 0.7s ease 0.5s both;
+    }
+    .lp-role-pill {
+      display: flex; align-items: center; gap: 7px;
+      background: rgba(255,255,255,0.1); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 7px 13px; border-radius: 100px;
+      font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.85);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .lp-role-pill:hover { background: rgba(255,255,255,0.2); color: white; }
+    .lp-role-pill.active-role {
+      background: white; color: var(--blue); border-color: white;
+    }
+    .lp-role-pill .rp-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+    /* ===== RIGHT PANEL ===== */
+    .lp-right {
+      width: 460px; flex-shrink: 0;
+      background: white;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 50px 52px;
+      position: relative; overflow-y: auto;
+    }
+
+    /* Top decoration */
+    .lp-right::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--blue-dd), var(--blue), #6366f1, var(--green));
+    }
+
+    /* Back to home link */
+    .back-link {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 12.5px; font-weight: 600; color: var(--g400);
+      margin-bottom: 40px; transition: color 0.2s; width: fit-content;
+    }
+    .back-link:hover { color: var(--blue); }
+    .back-link .arrow-back { transition: transform 0.2s; }
+    .back-link:hover .arrow-back { transform: translateX(-3px); }
+
+    /* Form header */
+    .form-logo {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 28px;
+      animation: fadeUp 0.5s ease 0.1s both;
+    }
+    .form-logo-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--blue), #6366f1);
+      border-radius: 11px; display: flex; align-items: center;
+      justify-content: center; font-size: 19px;
+      box-shadow: 0 4px 16px rgba(37,99,235,0.35);
+    }
+    .form-logo-name { font-family: var(--fd); font-size: 17px; font-weight: 800; color: var(--g900); }
+    .form-logo-tag  { font-size: 11px; color: var(--g400); font-weight: 500; }
+
+    .form-title {
+      font-family: var(--fd); font-size: 26px; font-weight: 800;
+      color: var(--g900); letter-spacing: -0.02em; margin-bottom: 6px;
+      animation: fadeUp 0.5s ease 0.15s both;
+    }
+    .form-sub {
+      font-size: 14px; color: var(--g500); margin-bottom: 30px; line-height: 1.6;
+      animation: fadeUp 0.5s ease 0.2s both;
+    }
+
+    /* Role selector */
+    .role-tabs {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 8px;
+      margin-bottom: 24px;
+      animation: fadeUp 0.5s ease 0.25s both;
+    }
+    .role-tab {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 10px 6px; border-radius: 10px;
+      border: 1.5px solid var(--g200); background: var(--g50);
+      cursor: pointer; transition: all 0.2s; font-family: var(--fb);
+    }
+    .role-tab:hover { border-color: var(--blue-m); background: var(--blue-l); }
+    .role-tab.active {
+      border-color: var(--blue); background: var(--blue-l);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+    .role-tab .rt-icon { font-size: 20px; }
+    .role-tab .rt-name { font-size: 11.5px; font-weight: 600; color: var(--g700); }
+    .role-tab.active .rt-name { color: var(--blue); }
+
+    /* Flash messages */
+    .flash-msg {
+      display: flex; align-items: center; gap: 9px;
+      padding: 11px 14px; border-radius: 9px; font-size: 13px;
+      font-weight: 500; margin-bottom: 18px;
+      animation: flashIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes flashIn { from { opacity:0; transform: scale(0.95) translateY(-6px); } to { opacity:1; transform: scale(1) translateY(0); } }
+    .flash-success { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+    .flash-danger  { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+    /* Form fields */
+    .field-wrap {
+      margin-bottom: 16px;
+      animation: fadeUp 0.5s ease both;
+    }
+    .field-wrap.f1 { animation-delay: 0.3s; }
+    .field-wrap.f2 { animation-delay: 0.35s; }
+
+    .field-label {
+      display: block; font-size: 12.5px; font-weight: 700; color: var(--g700);
+      margin-bottom: 6px; letter-spacing: 0.01em;
+    }
+    .field-input-wrap { position: relative; }
+    .field-icon {
+      position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+      font-size: 16px; pointer-events: none;
+    }
+    .field-input {
+      width: 100%; padding: 12px 14px 12px 40px;
+      border: 1.5px solid var(--g200); border-radius: 10px;
+      font-size: 14px; font-family: var(--fb); color: var(--g900);
+      background: white; outline: none;
+      transition: all 0.2s;
+    }
+    .field-input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+    }
+    .field-input::placeholder { color: var(--g400); }
+    .field-input:focus + .field-focus-bar { opacity: 1; }
+
+    .pass-toggle {
+      position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; font-size: 16px;
+      color: var(--g400); transition: color 0.2s; padding: 0;
+    }
+    .pass-toggle:hover { color: var(--blue); }
+
+    /* Demo quick-fill */
+    .demo-quick {
+      background: linear-gradient(135deg, #f0f7ff, #eff6ff);
+      border: 1px solid var(--blue-m); border-radius: 11px;
+      padding: 14px 16px; margin-bottom: 20px;
+      animation: fadeUp 0.5s ease 0.4s both;
+    }
+    .demo-quick-title {
+      font-size: 11px; font-weight: 700; color: var(--blue);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .demo-quick-title::before { content: ''; width: 14px; height: 2px; background: var(--blue); border-radius: 2px; }
+    .demo-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+    .demo-btn {
+      padding: 5px 11px; border-radius: 7px; font-size: 11.5px; font-weight: 600;
+      cursor: pointer; border: 1.5px solid; transition: all 0.2s; font-family: var(--fb);
+    }
+    .demo-btn.db-dir   { border-color: rgba(37,99,235,0.3); color: var(--blue); background: rgba(37,99,235,0.07); }
+    .demo-btn.db-prof  { border-color: rgba(16,185,129,0.3); color: #065f46; background: rgba(16,185,129,0.07); }
+    .demo-btn.db-par   { border-color: rgba(245,158,11,0.3); color: #92400e; background: rgba(245,158,11,0.07); }
+    .demo-btn:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+
+    /* Submit button */
+    .submit-btn {
+      width: 100%; padding: 13px 20px;
+      background: linear-gradient(135deg, var(--blue) 0%, #4f46e5 100%);
+      color: white; border: none; border-radius: 11px;
+      font-size: 15px; font-weight: 700; font-family: var(--fd);
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 9px;
+      box-shadow: 0 6px 22px rgba(37,99,235,0.38);
+      transition: all 0.25s; position: relative; overflow: hidden;
+      animation: fadeUp 0.5s ease 0.45s both;
+      margin-top: 4px;
+    }
+    .submit-btn::before {
+      content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: left 0.5s ease;
+    }
+    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(37,99,235,0.5); }
+    .submit-btn:hover::before { left: 100%; }
+    .submit-btn:active { transform: translateY(0); }
+    .btn-arrow { transition: transform 0.2s; }
+    .submit-btn:hover .btn-arrow { transform: translateX(4px); }
+
+    /* Bottom decoration */
+    .form-bottom {
+      margin-top: 28px; text-align: center;
+      animation: fadeUp 0.5s ease 0.5s both;
+    }
+    .form-bottom p { font-size: 12.5px; color: var(--g400); }
+    .form-bottom a { color: var(--blue); font-weight: 600; }
+    .form-bottom a:hover { text-decoration: underline; }
+
+    .security-badges {
+      display: flex; justify-content: center; gap: 18px; margin-top: 18px;
+      padding-top: 18px; border-top: 1px solid var(--g100);
+    }
+    .sec-badge { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--g400); font-weight: 500; }
+
+    /* ===== KEYFRAMES ===== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .lp-left { display: none; }
+      .lp-right { width: 100%; padding: 40px 30px; }
+      html, body { overflow: auto; }
+    }
+    @media (max-width: 480px) {
+      .lp-right { padding: 30px 20px; }
+    }
+  </style>
+</head>
+<body>
+<div class="login-wrap">
+
+  <!-- ===== LEFT PANEL ===== -->
+  <div class="lp-left">
+    <div class="lp-mesh"></div>
+    <div class="lp-grid"></div>
+
+    <!-- Particles -->
+    <div class="lp-particles" id="particles"></div>
+
+    <!-- Logo -->
+    <div class="lp-logo">
+      <div class="lp-logo-icon">🏫</div>
+      <div>
+        <div class="lp-logo-name">EcoleCom</div>
+        <div class="lp-logo-tag">Plateforme Éducative Professionnelle</div>
+      </div>
+    </div>
+
+    <!-- Visual -->
+    <div class="lp-visual">
+      <div class="lp-headline">
+        Connectez toute<br>votre communauté<br><span class="hl">scolaire</span> ici
+      </div>
+      <div class="lp-sub">
+        Parents, professeurs et direction — une seule plateforme pour tout gérer. Simple, rapide, sécurisé.
+      </div>
+
+      <!-- 3D Dashboard Card -->
+      <div class="lp-card-3d" style="position:relative">
+        <div class="lp-dashboard-card" id="dashCard">
+          <div class="ldc-bar">
+            <div class="ldc-dot" style="background:#FF5F57"></div>
+            <div class="ldc-dot" style="background:#FFBD2E"></div>
+            <div class="ldc-dot" style="background:#28C840"></div>
+            <div class="ldc-title">📊 Tableau de bord — EcoleCom</div>
+          </div>
+          <div class="ldc-body">
+            <div class="ldc-stat">
+              <div class="ldc-icon">👥</div>
+              <div class="ldc-num" style="color:#60A5FA">24</div>
+              <div class="ldc-lbl">Élèves</div>
+            </div>
+            <div class="ldc-stat">
+              <div class="ldc-icon">📚</div>
+              <div class="ldc-num" style="color:#34d399">8</div>
+              <div class="ldc-lbl">Devoirs</div>
+            </div>
+            <div class="ldc-stat">
+              <div class="ldc-icon">📋</div>
+              <div class="ldc-num" style="color:#fb923c">3</div>
+              <div class="ldc-lbl">Absences</div>
+            </div>
+            <div class="ldc-stat">
+              <div class="ldc-icon">✉️</div>
+              <div class="ldc-num" style="color:#c084fc">5</div>
+              <div class="ldc-lbl">Msgs</div>
+            </div>
+          </div>
+          <div class="ldc-row">
+            <div class="ldc-msg-card">
+              <div class="ldc-msg-title">✉️ Messages récents</div>
+              <div class="ldc-msg-item">
+                <div class="ldc-av" style="background:#2563EB">FA</div>
+                <div><div class="ldc-msg-name">Fatima Alami</div><div class="ldc-msg-sub">Absence jeudi...</div></div>
+                <div class="unread-dot"></div>
+              </div>
+              <div class="ldc-msg-item">
+                <div class="ldc-av" style="background:#10B981">KT</div>
+                <div><div class="ldc-msg-name">Prof. Karim</div><div class="ldc-msg-sub">Devoir corrigé</div></div>
+              </div>
+              <div class="ldc-msg-item">
+                <div class="ldc-av" style="background:#F59E0B">SB</div>
+                <div><div class="ldc-msg-name">Sara Benali</div><div class="ldc-msg-sub">RDV demain?</div></div>
+                <div class="unread-dot"></div>
+              </div>
+            </div>
+            <div class="ldc-msg-card">
+              <div class="ldc-msg-title">📢 Annonces</div>
+              <div class="ldc-msg-item" style="flex-direction:column;align-items:flex-start;gap:2px">
+                <div class="ldc-msg-name">Réunion parents</div>
+                <div class="ldc-msg-sub">15 Mars 2025 · Salle A</div>
+              </div>
+              <div class="ldc-msg-item" style="flex-direction:column;align-items:flex-start;gap:2px">
+                <div class="ldc-msg-name">Sortie pédagogique</div>
+                <div class="ldc-msg-sub">22 Mars 2025</div>
+              </div>
+              <div class="ldc-msg-item" style="flex-direction:column;align-items:flex-start;gap:2px">
+                <div class="ldc-msg-name">Vacances printemps</div>
+                <div class="ldc-msg-sub">1 Avril 2025</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating badges -->
+        <div class="lp-float-badge fb1">
+          <div class="fb-icon">🔔</div>
+          <div>
+            <div class="fb-text-title">3 messages non lus</div>
+            <div class="fb-text-sub">Dernière connexion · il y a 5 min</div>
+          </div>
+        </div>
+        <div class="lp-float-badge fb2">
+          <div class="fb-icon">✅</div>
+          <div>
+            <div class="fb-text-title">98% de satisfaction</div>
+            <div class="fb-text-sub">Écoles partenaires</div>
+          </div>
+          <div class="fb-pill">↑ 12%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Roles pills -->
+    <div class="lp-roles">
+      <div class="lp-role-pill active-role">
+        <span class="rp-dot" style="background:#2563EB"></span> Direction
+      </div>
+      <div class="lp-role-pill">
+        <span class="rp-dot" style="background:#10B981"></span> Professeur
+      </div>
+      <div class="lp-role-pill">
+        <span class="rp-dot" style="background:#F59E0B"></span> Parent
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== RIGHT PANEL ===== -->
+  <div class="lp-right">
+
+    <a href="{{ url_for('auth.index') }}" class="back-link">
+      <span class="arrow-back">←</span> Retour à l'accueil
+    </a>
+
+    <div class="form-title">Bon retour 👋</div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+      <div class="flash-msg flash-{{ category }}">
+        {{ '✅' if category=='success' else '❌' }} {{ message }}
+      </div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('auth.login') }}" id="loginForm">
+      <div class="field-wrap f1">
+        <label class="field-label" for="email">Adresse email</label>
+        <div class="field-input-wrap">
+          <span class="field-icon">📧</span>
+          <input type="email" name="email" id="emailField" class="field-input"
+            placeholder="votre@email.com" required autofocus autocomplete="email">
+        </div>
+      </div>
+      <div class="field-wrap f2">
+        <label class="field-label" for="password">Mot de passe</label>
+        <div class="field-input-wrap">
+          <span class="field-icon">🔒</span>
+          <input type="password" name="password" id="passField" class="field-input"
+            placeholder="••••••••" required autocomplete="current-password">
+          <button type="button" class="pass-toggle" id="passToggle" title="Afficher">👁️</button>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span>🔐 Se connecter</span>
+        <span class="btn-arrow">→</span>
+      </button>
+    </form>
+
+    <div class="form-bottom">
+      <div class="security-badges">
+        <div class="sec-badge">🔒 SSL Sécurisé</div>
+        <div class="sec-badge">🛡️ RGPD Conforme</div>
+        <div class="sec-badge">⚡ Accès instantané</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ===== PARTICLES =====
+  const container = document.getElementById('particles');
+  const colors = ['rgba(255,255,255,0.15)', 'rgba(96,165,250,0.2)', 'rgba(52,211,153,0.15)', 'rgba(251,191,36,0.15)'];
+  for (let i = 0; i < 28; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 10 + 4;
+    p.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration:${Math.random()*15+10}s;
+      animation-delay:${Math.random()*10}s;
+    `;
+    container.appendChild(p);
+  }
+
+  // ===== 3D CARD TILT =====
+  const card = document.getElementById('dashCard');
+  const wrap = card.parentElement;
+  wrap.addEventListener('mousemove', (e) => {
+    const rect = wrap.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top)  / rect.height - 0.5;
+    card.style.transform = `rotateY(${x * 16 - 8}deg) rotateX(${-y * 10 + 4}deg)`;
+  });
+  wrap.addEventListener('mouseleave', () => {
+    card.style.transform = 'rotateY(-8deg) rotateX(4deg)';
+  });
+
+  // ===== ROLE TABS =====
+  document.querySelectorAll('.role-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const email = tab.dataset.email;
+      if (email) fillDemo(email);
+    });
+  });
+
+  // ===== DEMO FILL =====
+  function fillDemo(email) {
+    const emailField = document.getElementById('emailField');
+    const passField  = document.getElementById('passField');
+    emailField.value = email;
+    passField.value  = 'password';
+    // Animate the fields
+    [emailField, passField].forEach(f => {
+      f.style.borderColor = 'var(--blue)';
+      f.style.boxShadow = '0 0 0 4px rgba(37,99,235,0.12)';
+      setTimeout(() => { f.style.borderColor = ''; f.style.boxShadow = ''; }, 1200);
+    });
+    // Sync left panel role pills
+    const roles = ['direction', 'prof', 'parent'];
+    document.querySelectorAll('.lp-role-pill').forEach((p, i) => {
+      p.classList.toggle('active-role', email.startsWith(roles[i]));
+    });
+  }
+
+  // ===== PASSWORD TOGGLE =====
+  const passToggle = document.getElementById('passToggle');
+  const passField  = document.getElementById('passField');
+  passToggle.addEventListener('click', () => {
+    const isPass = passField.type === 'password';
+    passField.type = isPass ? 'text' : 'password';
+    passToggle.textContent = isPass ? '🙈' : '👁️';
+  });
+
+  // ===== SUBMIT ANIMATION =====
+  document.getElementById('loginForm').addEventListener('submit', (e) => {
+    const btn = document.getElementById('submitBtn');
+    btn.innerHTML = '<span>⏳ Connexion en cours...</span>';
+    btn.style.opacity = '0.85';
+    btn.style.cursor = 'not-allowed';
+  });
+</script>
+</body>
+</html>

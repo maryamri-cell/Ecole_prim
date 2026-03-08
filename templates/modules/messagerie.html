@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Messagerie — EcoleCom{% endblock %}
+{% block page_title %}Messagerie{% endblock %}
+{% block page_subtitle %}Communications internes{% endblock %}
+{% block topbar_actions %}
+<button class="btn btn-primary btn-sm" onclick="openModal('modal-new-msg')">✏️ Nouveau message</button>
+{% endblock %}
+{% block content %}
+<div class="conversation-wrapper">
+  <div class="conv-list">
+    <div class="conv-list-header">💬 Conversations ({{ msgs|length }})</div>
+    {% if not msgs %}
+    <div class="empty-state" style="padding:30px"><div class="empty-icon">📭</div><p>Aucun message</p></div>
+    {% else %}
+    {% for m in msgs %}
+    {% set is_sent = m.expediteur_id == current_user.id %}
+    {% set other = m.destinataire if is_sent else m.expediteur %}
+    <a href="{{ url_for('messages.index', id=m.id) }}" class="message-item {{ 'unread' if not is_sent and not m.lu }}">
+      <div class="msg-avatar" style="{{ 'background:var(--green)' if is_sent }}">{{ other.initiales() }}</div>
+      <div class="msg-content">
+        <div class="msg-sender">{{ other.prenom }} {{ other.nom }}{% if is_sent %} <span style="font-size:10px;color:var(--gray-400)">(envoyé)</span>{% endif %}</div>
+        <div class="msg-subject">{{ m.sujet or m.contenu[:45] }}</div>
+      </div>
+    </a>
+    {% endfor %}
+    {% endif %}
+  </div>
+  <div class="conv-detail">
+    {% if selected %}
+    {% set is_sent = selected.expediteur_id == current_user.id %}
+    {% set other = selected.destinataire if is_sent else selected.expediteur %}
+    <div class="conv-detail-header">
+      <div class="avatar lg">{{ other.initiales() }}</div>
+      <div>
+        <div style="font-weight:700;font-size:14px">{{ other.prenom }} {{ other.nom }}</div>
+        <div style="font-size:11px;color:var(--gray-400)">{{ selected.date_envoi.strftime('%d/%m/%Y %H:%M') }}</div>
+      </div>
+      {% if selected.sujet %}<span class="badge badge-gray" style="margin-left:auto">{{ selected.sujet }}</span>{% endif %}
+    </div>
+    <div class="conv-messages">
+      <div class="msg-bubble {{ 'sent' if is_sent else 'received' }}">
+        {{ selected.contenu }}
+        <div class="msg-time">{{ selected.date_envoi.strftime('%H:%M') }}</div>
+      </div>
+    </div>
+    {% if not is_sent %}
+    <form method="POST" action="{{ url_for('messages.envoyer') }}">
+      <input type="hidden" name="destinataire_id" value="{{ selected.expediteur_id }}">
+      <input type="hidden" name="sujet" value="Re: {{ selected.sujet or '' }}">
+      <div class="conv-input">
+        <textarea name="contenu" class="form-control" placeholder="Répondre…" rows="1" required></textarea>
+        <button type="submit" class="btn btn-primary">📤</button>
+      </div>
+    </form>
+    {% endif %}
+    {% else %}
+    <div style="flex:1;display:flex;align-items:center;justify-content:center">
+      <div class="empty-state">
+        <div class="empty-icon">✉️</div>
+        <p>Sélectionnez un message</p>
+        <button class="btn btn-primary btn-sm" style="margin-top:14px" onclick="openModal('modal-new-msg')">✏️ Nouveau message</button>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-new-msg">
+  <div class="modal">
+    <div class="modal-header"><h3>✏️ Nouveau message</h3><button class="btn-close" onclick="closeModal('modal-new-msg')">×</button></div>
+    <form method="POST" action="{{ url_for('messages.envoyer') }}">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Destinataire</label>
+          <select name="destinataire_id" class="form-control" required>
+            <option value="">-- Choisir --</option>
+            {% for u in users %}<option value="{{ u.id }}">{{ u.prenom }} {{ u.nom }} ({{ u.role_label() }})</option>{% endfor %}
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Sujet</label><input type="text" name="sujet" class="form-control" placeholder="Sujet du message"></div>
+        <div class="form-group"><label class="form-label">Message</label><textarea name="contenu" class="form-control" rows="4" required></textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" onclick="closeModal('modal-new-msg')">Annuler</button>
+        <button type="submit" class="btn btn-primary">📤 Envoyer</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

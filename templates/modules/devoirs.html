@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Devoirs — EcoleCom{% endblock %}
+{% block page_title %}Devoirs & Leçons{% endblock %}
+{% block page_subtitle %}{% if current_user.role=='professeur' %}Gérer les devoirs{% else %}Devoirs à faire{% endif %}{% endblock %}
+{% block topbar_actions %}{% if current_user.role=='professeur' %}<button class="btn btn-primary btn-sm" onclick="openModal('modal-add')">➕ Nouveau devoir</button>{% endif %}{% endblock %}
+{% block content %}
+{% if not devoirs %}
+<div class="empty-state card" style="padding:48px"><div class="empty-icon">📚</div><p>Aucun devoir publié</p></div>
+{% else %}
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px">
+{% for d in devoirs %}
+{% set diff = (d.date_limite - today).days if d.date_limite else 99 %}
+<div class="card">
+  <div style="padding:16px 18px;border-bottom:1px solid var(--gray-100)">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+      <div>
+        <div style="font-weight:700;font-size:14px;color:var(--gray-900)">{{ d.titre }}</div>
+        <div style="font-size:11.5px;color:var(--gray-400);margin-top:2px">{{ d.matiere }} — Classe {{ d.classe }}</div>
+      </div>
+      {% if current_user.role=='professeur' and d.professeur_id==current_user.id %}
+      <form method="POST" action="{{ url_for('devoirs.supprimer', id=d.id) }}" onsubmit="return confirmDelete()">
+        <button class="btn btn-danger btn-xs">🗑️</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  <div style="padding:14px 18px">
+    <p style="font-size:13px;color:var(--gray-500);line-height:1.6;margin-bottom:12px">{{ d.description or 'Pas de description.' }}</p>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:7px">
+        <div class="avatar" style="width:24px;height:24px;font-size:9px">{{ d.professeur.initiales() }}</div>
+        <span style="font-size:12px;color:var(--gray-500)">{{ d.professeur.prenom }} {{ d.professeur.nom }}</span>
+      </div>
+      {% if d.date_limite %}
+      <span class="badge {{ 'badge-danger' if diff<=2 else 'badge-success' }}">
+        {{ '🔴 Urgent' if diff<=2 else '🟢 ' + d.date_limite.strftime('%d/%m/%Y') }}
+      </span>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+{% if current_user.role=='professeur' %}
+<div class="modal-overlay" id="modal-add">
+  <div class="modal">
+    <div class="modal-header"><h3>📝 Nouveau devoir</h3><button class="btn-close" onclick="closeModal('modal-add')">×</button></div>
+    <form method="POST" action="{{ url_for('devoirs.ajouter') }}">
+      <div class="modal-body">
+        <div class="form-group"><label class="form-label">Titre</label><input type="text" name="titre" class="form-control" required></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Classe</label><select name="classe" class="form-control" required>{% for c in ['CP-A','CP-B','CE1-A','CE1-B','CE2-A','CM1-A','CM1-B','CM2-A','CM2-B'] %}<option>{{ c }}</option>{% endfor %}</select></div>
+          <div class="form-group"><label class="form-label">Matière</label><select name="matiere" class="form-control">{% for m in ['Mathématiques','Français','Sciences','Histoire-Géo','Anglais','Arts','EPS','Autre'] %}<option>{{ m }}</option>{% endfor %}</select></div>
+        </div>
+        <div class="form-group"><label class="form-label">Date limite</label><input type="date" name="date_limite" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="3"></textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" onclick="closeModal('modal-add')">Annuler</button>
+        <button type="submit" class="btn btn-primary">📚 Publier</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

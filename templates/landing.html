@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoleCom — La Plateforme Scolaire Nouvelle Génération</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --blue:       #2563EB;
+      --blue-d:     #1D4ED8;
+      --blue-dd:    #1e3a8a;
+      --blue-l:     #EFF6FF;
+      --blue-m:     #DBEAFE;
+      --blue-g:     #60A5FA;
+      --green:      #10B981;
+      --green-l:    #D1FAE5;
+      --orange:     #F59E0B;
+      --orange-l:   #FEF3C7;
+      --purple:     #8B5CF6;
+      --red:        #EF4444;
+      --gray-100:   #F3F4F6;
+      --gray-200:   #E5E7EB;
+      --gray-400:   #9CA3AF;
+      --gray-500:   #6B7280;
+      --gray-600:   #4B5563;
+      --gray-700:   #374151;
+      --gray-800:   #1F2937;
+      --gray-900:   #111827;
+      --white:      #FFFFFF;
+      --font-display: 'Sora', sans-serif;
+      --font-body:    'Plus Jakarta Sans', sans-serif;
+    }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: var(--font-body); color: var(--gray-800); background: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+
+    /* ===== NAVBAR ===== */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+      padding: 0 40px; height: 70px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(37,99,235,0.1);
+      transition: all 0.3s ease;
+    }
+    .nav.scrolled { box-shadow: 0 4px 30px rgba(37,99,235,0.08); background: rgba(255,255,255,0.97); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; }
+    .nav-logo-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue-g) 100%);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      font-size: 18px; box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+    }
+    .nav-logo-name { font-family: var(--font-display); font-weight: 800; font-size: 18px; color: var(--gray-900); }
+    .nav-logo-name span { color: var(--blue); }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a { font-size: 14px; font-weight: 500; color: var(--gray-600); transition: color 0.2s; }
+    .nav-links a:hover { color: var(--blue); }
+    .nav-cta {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .btn-nav-ghost {
+      padding: 8px 18px; border-radius: 8px; font-size: 13.5px; font-weight: 600;
+      color: var(--blue); border: 1.5px solid var(--blue-m); background: transparent;
+      cursor: pointer; transition: all 0.2s; font-family: var(--font-body);
+    }
+    .btn-nav-ghost:hover { background: var(--blue-l); }
+    .btn-nav-fill {
+      padding: 9px 20px; border-radius: 8px; font-size: 13.5px; font-weight: 700;
+      background: linear-gradient(135deg, var(--blue) 0%, #3B82F6 100%);
+      color: white; border: none; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+      transition: all 0.2s; font-family: var(--font-body);
+    }
+    .btn-nav-fill:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,0.45); }
+    .nav-hamburger { display: none; background: none; border: none; cursor: pointer; font-size: 22px; }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      padding: 130px 40px 80px;
+      display: flex; align-items: center;
+      position: relative; overflow: hidden;
+      background: linear-gradient(160deg, #f0f7ff 0%, #ffffff 45%, #f5f0ff 100%);
+    }
+    /* Animated background blobs */
+    .hero::before {
+      content: '';
+      position: absolute; top: -200px; right: -200px;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 70%);
+      border-radius: 50%; animation: blobMove 8s ease-in-out infinite;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; bottom: -150px; left: -150px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%);
+      border-radius: 50%; animation: blobMove 10s ease-in-out infinite reverse;
+    }
+    @keyframes blobMove {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      33% { transform: translate(30px,-20px) scale(1.05); }
+      66% { transform: translate(-20px,30px) scale(0.95); }
+    }
+    /* Grid dot pattern */
+    .hero-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image: radial-gradient(circle, rgba(37,99,235,0.12) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+    }
+    .hero-inner {
+      max-width: 1200px; margin: 0 auto; width: 100%;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+      align-items: center; position: relative; z-index: 1;
+    }
+    .hero-left { display: flex; flex-direction: column; gap: 28px; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: white; border: 1.5px solid var(--blue-m);
+      padding: 7px 14px; border-radius: 100px; width: fit-content;
+      font-size: 13px; font-weight: 600; color: var(--blue);
+      box-shadow: 0 2px 12px rgba(37,99,235,0.12);
+      animation: fadeSlideUp 0.6s ease forwards;
+    }
+    .hero-badge .badge-dot {
+      width: 8px; height: 8px; background: var(--green);
+      border-radius: 50%; animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(38px, 5vw, 58px);
+      font-weight: 800;
+      line-height: 1.12;
+      color: var(--gray-900);
+      letter-spacing: -0.03em;
+      animation: fadeSlideUp 0.7s ease 0.1s both;
+    }
+    .hero-title .hl {
+      background: linear-gradient(135deg, var(--blue) 0%, #6366f1 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-title .hl-green {
+      background: linear-gradient(135deg, var(--green) 0%, #059669 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-sub {
+      font-size: 17px; line-height: 1.75; color: var(--gray-500);
+      max-width: 520px; font-weight: 400;
+      animation: fadeSlideUp 0.7s ease 0.2s both;
+    }
+    .hero-actions {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      animation: fadeSlideUp 0.7s ease 0.3s both;
+    }
+    .btn-hero-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 15px 30px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--blue) 0%, #4f46e5 100%);
+      color: white; font-size: 15px; font-weight: 700;
+      font-family: var(--font-body);
+      box-shadow: 0 8px 28px rgba(37,99,235,0.38);
+      transition: all 0.25s; border: none; cursor: pointer;
+    }
+    .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(37,99,235,0.48); }
+    .btn-hero-primary .arrow { transition: transform 0.2s; }
+    .btn-hero-primary:hover .arrow { transform: translateX(4px); }
+    .btn-hero-secondary {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 15px 28px; border-radius: 12px;
+      background: white; color: var(--gray-700);
+      font-size: 15px; font-weight: 600;
+      font-family: var(--font-body);
+      border: 1.5px solid var(--gray-200);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      transition: all 0.25s; cursor: pointer;
+    }
+    .btn-hero-secondary:hover { border-color: var(--blue-m); color: var(--blue); background: var(--blue-l); transform: translateY(-1px); }
+    /* Hero stats */
+    .hero-stats {
+      display: flex; gap: 32px; flex-wrap: wrap;
+      padding-top: 8px;
+      animation: fadeSlideUp 0.7s ease 0.4s both;
+    }
+    .stat-item { display: flex; flex-direction: column; }
+    .stat-num {
+      font-family: var(--font-display); font-size: 28px; font-weight: 800;
+      color: var(--gray-900); line-height: 1;
+    }
+    .stat-lbl { font-size: 12.5px; color: var(--gray-400); font-weight: 500; margin-top: 3px; }
+    .stat-divider { width: 1px; background: var(--gray-200); height: 40px; align-self: center; }
+
+    /* ===== HERO RIGHT — Dashboard mockup ===== */
+    .hero-right {
+      position: relative; z-index: 1;
+      animation: fadeSlideLeft 0.9s ease 0.2s both;
+    }
+    @keyframes fadeSlideLeft {
+      from { opacity: 0; transform: translateX(40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .mockup-wrapper {
+      position: relative;
+      filter: drop-shadow(0 40px 80px rgba(37,99,235,0.22));
+    }
+    .mockup-browser {
+      background: white; border-radius: 16px;
+      border: 1px solid rgba(37,99,235,0.12);
+      overflow: hidden;
+    }
+    .mockup-browser-bar {
+      background: var(--gray-100); padding: 10px 16px;
+      display: flex; align-items: center; gap: 6px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #FF5F57; }
+    .dot-y { background: #FFBD2E; }
+    .dot-g { background: #28C840; }
+    .mockup-url {
+      flex: 1; background: white; border-radius: 5px; padding: 4px 10px;
+      font-size: 11px; color: var(--gray-400); margin: 0 12px;
+      border: 1px solid var(--gray-200);
+    }
+    /* Mini dashboard inside mockup */
+    .mockup-dashboard {
+      display: flex; height: 320px;
+    }
+    .mockup-sidebar {
+      width: 90px; background: #1e3a8a;
+      padding: 12px 8px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .ms-logo {
+      width: 30px; height: 30px; background: rgba(255,255,255,0.2);
+      border-radius: 6px; margin: 0 auto 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .ms-item {
+      padding: 6px 8px; border-radius: 6px; cursor: pointer;
+      display: flex; align-items: center; gap: 5px;
+      font-size: 9px; color: rgba(255,255,255,0.6); font-weight: 500;
+      transition: background 0.2s;
+    }
+    .ms-item.active, .ms-item:hover { background: rgba(255,255,255,0.15); color: white; }
+    .ms-item .mi { font-size: 11px; }
+    .mockup-main { flex: 1; background: #f5f6fa; padding: 12px; overflow: hidden; }
+    .mm-topbar {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+    }
+    .mm-title { font-family: var(--font-display); font-size: 11px; font-weight: 700; color: var(--gray-800); }
+    .mm-avatar { width: 22px; height: 22px; background: var(--blue); border-radius: 50%; font-size: 8px; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+    .mm-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 10px; }
+    .mms {
+      background: white; border-radius: 7px; padding: 7px 6px;
+      border: 1px solid var(--gray-200);
+    }
+    .mms-num { font-size: 14px; font-weight: 800; color: var(--gray-900); line-height: 1; }
+    .mms-lbl { font-size: 7px; color: var(--gray-400); margin-top: 2px; }
+    .mms-icon { font-size: 10px; margin-bottom: 3px; }
+    .mm-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .mm-card { background: white; border-radius: 7px; padding: 8px; border: 1px solid var(--gray-200); }
+    .mm-card-title { font-size: 8px; font-weight: 700; color: var(--gray-700); margin-bottom: 5px; }
+    .mm-msg { display: flex; align-items: center; gap: 4px; padding: 3px 0; border-bottom: 1px solid var(--gray-100); }
+    .mm-msg:last-child { border-bottom: none; }
+    .mm-msg-av { width: 14px; height: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 6px; color: white; font-weight: 700; }
+    .mm-msg-text { flex: 1; }
+    .mm-msg-name { font-size: 7px; font-weight: 600; color: var(--gray-800); }
+    .mm-msg-sub  { font-size: 6px; color: var(--gray-400); }
+    .mm-msg.unread .mm-msg-name { color: var(--blue); }
+    .mm-ann { padding: 3px 0; border-bottom: 1px solid var(--gray-100); display: flex; gap: 4px; align-items: flex-start; }
+    .mm-ann:last-child { border-bottom: none; }
+    .mm-ann-dot { width: 5px; height: 5px; border-radius: 1px; flex-shrink: 0; margin-top: 2px; }
+    .mm-ann-title { font-size: 7px; font-weight: 600; color: var(--gray-800); }
+    .mm-ann-date  { font-size: 6px; color: var(--gray-400); }
+    /* Floating notif badge */
+    .mockup-notif {
+      position: absolute; top: -14px; right: -18px;
+      background: white; border-radius: 12px; padding: 8px 12px;
+      box-shadow: 0 8px 30px rgba(37,99,235,0.2);
+      border: 1px solid var(--blue-m);
+      display: flex; align-items: center; gap: 8px;
+      animation: floatUp 3s ease-in-out infinite;
+    }
+    @keyframes floatUp {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .mockup-notif-icon { font-size: 18px; }
+    .mockup-notif-text { display: flex; flex-direction: column; }
+    .mockup-notif-title { font-size: 11px; font-weight: 700; color: var(--gray-900); }
+    .mockup-notif-sub   { font-size: 10px; color: var(--gray-400); }
+    .mockup-badge2 {
+      position: absolute; bottom: -18px; left: 10px;
+      background: white; border-radius: 12px; padding: 8px 14px;
+      box-shadow: 0 8px 30px rgba(16,185,129,0.2);
+      border: 1px solid var(--green-l);
+      display: flex; align-items: center; gap: 8px;
+      animation: floatUp 3.5s ease-in-out infinite 1s;
+    }
+    .mockup-badge2-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; }
+    .mockup-badge2-text { font-size: 11px; font-weight: 700; color: var(--green); }
+
+    /* ===== TRUSTED BY ===== */
+    .trusted {
+      padding: 30px 40px;
+      background: white;
+      border-top: 1px solid var(--gray-200);
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .trusted-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; gap: 40px; flex-wrap: wrap;
+    }
+    .trusted-label { font-size: 12px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; }
+    .trusted-logos { display: flex; gap: 36px; align-items: center; flex-wrap: wrap; }
+    .trusted-logo {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 13px; font-weight: 700; color: var(--gray-400);
+      opacity: 0.55; transition: opacity 0.2s;
+    }
+    .trusted-logo:hover { opacity: 0.9; }
+    .trusted-logo .tl-icon { font-size: 18px; }
+
+    /* ===== FEATURES ===== */
+    .features {
+      padding: 100px 40px;
+      background: linear-gradient(180deg, white 0%, #f8faff 100%);
+    }
+    .section-top { text-align: center; max-width: 600px; margin: 0 auto 64px; }
+    .section-chip {
+      display: inline-block;
+      background: var(--blue-l); color: var(--blue);
+      font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+      padding: 5px 14px; border-radius: 100px; margin-bottom: 16px;
+      border: 1px solid var(--blue-m);
+    }
+    .section-title {
+      font-family: var(--font-display); font-size: clamp(28px, 3.5vw, 40px);
+      font-weight: 800; color: var(--gray-900); line-height: 1.2;
+      letter-spacing: -0.02em; margin-bottom: 14px;
+    }
+    .section-sub { font-size: 16px; color: var(--gray-500); line-height: 1.7; }
+    .features-grid {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .feat-card {
+      background: white; border-radius: 20px;
+      padding: 30px 28px;
+      border: 1px solid var(--gray-200);
+      transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      position: relative; overflow: hidden;
+    }
+    .feat-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .feat-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(37,99,235,0.12); border-color: transparent; }
+    .feat-card:hover::before { opacity: 1; }
+    .feat-card.c1::before { background: linear-gradient(90deg, var(--blue), #818cf8); }
+    .feat-card.c2::before { background: linear-gradient(90deg, var(--green), #34d399); }
+    .feat-card.c3::before { background: linear-gradient(90deg, var(--orange), #fbbf24); }
+    .feat-card.c4::before { background: linear-gradient(90deg, var(--purple), #a78bfa); }
+    .feat-card.c5::before { background: linear-gradient(90deg, var(--red), #fb923c); }
+    .feat-card.c6::before { background: linear-gradient(90deg, #06b6d4, #3b82f6); }
+    .feat-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; margin-bottom: 18px;
+    }
+    .feat-icon.i1 { background: linear-gradient(135deg, #dbeafe, #eff6ff); }
+    .feat-icon.i2 { background: linear-gradient(135deg, #d1fae5, #ecfdf5); }
+    .feat-icon.i3 { background: linear-gradient(135deg, #fef3c7, #fffbeb); }
+    .feat-icon.i4 { background: linear-gradient(135deg, #ede9fe, #f5f3ff); }
+    .feat-icon.i5 { background: linear-gradient(135deg, #fee2e2, #fff1f2); }
+    .feat-icon.i6 { background: linear-gradient(135deg, #cffafe, #ecfeff); }
+    .feat-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--gray-900); margin-bottom: 10px; }
+    .feat-desc  { font-size: 14px; color: var(--gray-500); line-height: 1.7; }
+    .feat-tag { display: inline-block; margin-top: 16px; font-size: 11.5px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+    .feat-tag.t1 { background: var(--blue-l); color: var(--blue); }
+    .feat-tag.t2 { background: var(--green-l); color: #065f46; }
+    .feat-tag.t3 { background: var(--orange-l); color: #92400e; }
+    .feat-tag.t4 { background: #ede9fe; color: #5b21b6; }
+    .feat-tag.t5 { background: #fee2e2; color: #991b1b; }
+    .feat-tag.t6 { background: #cffafe; color: #164e63; }
+
+    /* ===== ROLES SECTION ===== */
+    .roles {
+      padding: 100px 40px;
+      background: white;
+    }
+    .roles-inner { max-width: 1100px; margin: 0 auto; }
+    .roles-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 56px; }
+    .role-card {
+      border-radius: 24px; padding: 36px 30px; text-align: center;
+      position: relative; overflow: hidden;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .role-card:hover { transform: translateY(-8px) scale(1.01); }
+    .role-card.r-dir   { background: linear-gradient(145deg, #1e3a8a 0%, #2563EB 100%); color: white; }
+    .role-card.r-prof  { background: linear-gradient(145deg, #065f46 0%, #10B981 100%); color: white; }
+    .role-card.r-parent{ background: linear-gradient(145deg, #92400e 0%, #F59E0B 100%); color: white; }
+    .role-card::before {
+      content: ''; position: absolute;
+      top: -80px; right: -80px;
+      width: 200px; height: 200px;
+      background: rgba(255,255,255,0.08); border-radius: 50%;
+    }
+    .role-card::after {
+      content: ''; position: absolute;
+      bottom: -60px; left: -60px;
+      width: 160px; height: 160px;
+      background: rgba(255,255,255,0.05); border-radius: 50%;
+    }
+    .role-avatar { font-size: 52px; margin-bottom: 16px; display: block; position: relative; z-index: 1; }
+    .role-name { font-family: var(--font-display); font-size: 20px; font-weight: 800; margin-bottom: 8px; position: relative; z-index: 1; }
+    .role-sub { font-size: 13.5px; opacity: 0.8; line-height: 1.6; margin-bottom: 20px; position: relative; z-index: 1; }
+    .role-features { list-style: none; text-align: left; display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; }
+    .role-features li { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; }
+    .role-features li::before { content: '✓'; width: 18px; height: 18px; background: rgba(255,255,255,0.25); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; flex-shrink: 0; }
+
+    /* ===== STATS SECTION ===== */
+    .stats-section {
+      padding: 80px 40px;
+      background: linear-gradient(135deg, var(--blue-dd) 0%, var(--blue) 50%, #6366f1 100%);
+      position: relative; overflow: hidden;
+    }
+    .stats-section::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+    .stats-inner {
+      max-width: 1000px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 30px;
+      position: relative; z-index: 1; text-align: center;
+    }
+    .stats-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .stats-num {
+      font-family: var(--font-display); font-size: 48px; font-weight: 800;
+      color: white; line-height: 1; letter-spacing: -0.03em;
+    }
+    .stats-num span { font-size: 32px; }
+    .stats-lbl { font-size: 14px; color: rgba(255,255,255,0.7); font-weight: 500; }
+    .stats-divider { width: 1px; background: rgba(255,255,255,0.15); }
+
+    /* ===== TESTIMONIALS ===== */
+    .testimonials {
+      padding: 100px 40px;
+      background: linear-gradient(180deg, #f8faff 0%, white 100%);
+    }
+    .testi-grid {
+      max-width: 1100px; margin: 56px auto 0;
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 22px;
+    }
+    .testi-card {
+      background: white; border-radius: 20px; padding: 28px;
+      border: 1px solid var(--gray-200);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .testi-card:hover { box-shadow: 0 16px 44px rgba(37,99,235,0.1); transform: translateY(-4px); border-color: var(--blue-m); }
+    .testi-stars { color: #F59E0B; font-size: 16px; letter-spacing: 2px; margin-bottom: 14px; }
+    .testi-quote { font-size: 14.5px; line-height: 1.75; color: var(--gray-600); margin-bottom: 22px; font-style: italic; }
+    .testi-quote::before { content: '"'; font-size: 48px; color: var(--blue-m); font-family: Georgia; line-height: 0; vertical-align: -18px; margin-right: 4px; }
+    .testi-author { display: flex; align-items: center; gap: 12px; }
+    .testi-av {
+      width: 42px; height: 42px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .testi-name  { font-size: 14px; font-weight: 700; color: var(--gray-900); }
+    .testi-role  { font-size: 12px; color: var(--gray-400); margin-top: 1px; }
+
+    /* ===== CTA FINAL ===== */
+    .cta-final {
+      padding: 100px 40px;
+      background: white;
+      text-align: center;
+    }
+    .cta-box {
+      max-width: 700px; margin: 0 auto;
+      background: linear-gradient(135deg, var(--blue-dd) 0%, var(--blue) 60%, #6366f1 100%);
+      border-radius: 28px; padding: 60px 50px;
+      position: relative; overflow: hidden;
+    }
+    .cta-box::before {
+      content: ''; position: absolute;
+      top: -100px; right: -100px;
+      width: 300px; height: 300px;
+      background: rgba(255,255,255,0.07); border-radius: 50%;
+    }
+    .cta-box::after {
+      content: ''; position: absolute;
+      bottom: -80px; left: -80px;
+      width: 250px; height: 250px;
+      background: rgba(255,255,255,0.05); border-radius: 50%;
+    }
+    .cta-box h2 {
+      font-family: var(--font-display); font-size: 36px; font-weight: 800;
+      color: white; margin-bottom: 14px; position: relative; z-index: 1; letter-spacing: -0.02em;
+    }
+    .cta-box p { font-size: 16px; color: rgba(255,255,255,0.75); margin-bottom: 32px; line-height: 1.7; position: relative; z-index: 1; }
+    .btn-cta-white {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 16px 36px; border-radius: 12px;
+      background: white; color: var(--blue);
+      font-size: 16px; font-weight: 700; font-family: var(--font-body);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.2);
+      transition: all 0.25s; border: none; cursor: pointer;
+      position: relative; z-index: 1;
+    }
+    .btn-cta-white:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 14px 40px rgba(0,0,0,0.3); }
+    .cta-note { margin-top: 16px; font-size: 12.5px; color: rgba(255,255,255,0.55); position: relative; z-index: 1; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--gray-900); color: rgba(255,255,255,0.7);
+      padding: 60px 40px 28px;
+    }
+    .footer-grid {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 50px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .footer-brand .fb-logo {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+    }
+    .footer-brand .fb-logo-icon {
+      width: 34px; height: 34px; background: var(--blue); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+    .footer-brand .fb-name { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: white; }
+    .footer-brand p { font-size: 13.5px; line-height: 1.7; max-width: 240px; }
+    .footer-col h5 { font-size: 13px; font-weight: 700; color: white; margin-bottom: 16px; letter-spacing: 0.03em; }
+    .footer-col ul { display: flex; flex-direction: column; gap: 9px; }
+    .footer-col ul li a { font-size: 13px; transition: color 0.2s; }
+    .footer-col ul li a:hover { color: white; }
+    .footer-bottom {
+      max-width: 1100px; margin: 24px auto 0;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12.5px;
+    }
+    .footer-bottom-logo { display: flex; align-items: center; gap: 6px; font-weight: 600; color: rgba(255,255,255,0.4); }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-d1 { transition-delay: 0.1s; }
+    .reveal-d2 { transition-delay: 0.2s; }
+    .reveal-d3 { transition-delay: 0.3s; }
+    .reveal-d4 { transition-delay: 0.4s; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 50px; }
+      .hero-right { max-width: 560px; }
+      .features-grid { grid-template-columns: repeat(2,1fr); }
+      .roles-grid { grid-template-columns: 1fr 1fr; }
+      .stats-inner { grid-template-columns: repeat(2,1fr); }
+      .testi-grid { grid-template-columns: 1fr 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-cta .btn-nav-ghost { display: none; }
+      .nav-hamburger { display: block; }
+      .hero { padding: 110px 20px 60px; }
+      .features, .roles, .testimonials, .cta-final { padding: 70px 20px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .roles-grid { grid-template-columns: 1fr; }
+      .stats-inner { grid-template-columns: 1fr 1fr; gap: 20px; }
+      .testi-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+      .cta-box { padding: 40px 28px; }
+      .cta-box h2 { font-size: 26px; }
+      .hero-stats { gap: 20px; }
+      .stat-divider { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="nav" id="navbar">
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-icon">🏫</div>
+    <span class="nav-logo-name">Ecole<span>Com</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="#features">Fonctionnalités</a>
+    <a href="#roles">Rôles</a>
+    <a href="#temoignages">Témoignages</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="nav-cta">
+    <a href="{{ url_for('auth.login') }}"><button class="btn-nav-ghost">Connexion</button></a>
+    <a href="{{ url_for('auth.login') }}"><button class="btn-nav-fill">Commencer →</button></a>
+  </div>
+  <button class="nav-hamburger" id="hamburger">☰</button>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+
+    <!-- Left Content -->
+    <div class="hero-left">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        🎓 Solution N°1 pour les Écoles Primaires
+      </div>
+      <h1 class="hero-title">
+        La Communication<br>
+        Scolaire <span class="hl">Réinventée</span><br>
+        <span class="hl-green">pour le Maroc</span>
+      </h1>
+      <p class="hero-sub">
+        Connectez parents, professeurs et direction en temps réel. 
+        Pilotez devoirs, absences, rendez-vous et annonces depuis une 
+        seule plateforme fluide et sécurisée.
+      </p>
+      <div class="hero-actions">
+        <a href="{{ url_for('auth.login') }}">
+          <button class="btn-hero-primary">
+            🚀 Accéder à la Plateforme
+            <span class="arrow">→</span>
+          </button>
+        </a>
+        <a href="#features">
+          <button class="btn-hero-secondary">
+            ▶ Voir les fonctionnalités
+          </button>
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-num">500<span style="color:var(--blue)">+</span></div>
+          <div class="stat-lbl">Écoles partenaires</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-num">100K<span style="color:var(--green)">+</span></div>
+          <div class="stat-lbl">Utilisateurs actifs</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-num">98<span style="color:var(--orange)">%</span></div>
+          <div class="stat-lbl">Taux de satisfaction</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right — Dashboard Mockup -->
+    <div class="hero-right">
+      <div class="mockup-wrapper">
+        <div class="mockup-browser">
+          <div class="mockup-browser-bar">
+            <div class="dot dot-r"></div>
+            <div class="dot dot-y"></div>
+            <div class="dot dot-g"></div>
+            <div class="mockup-url">ecolecom.ma/dashboard</div>
+          </div>
+          <div class="mockup-dashboard">
+            <!-- Mini Sidebar -->
+            <div class="mockup-sidebar">
+              <div class="ms-logo">🏫</div>
+              <div class="ms-item active"><span class="mi">🏠</span> Board</div>
+              <div class="ms-item"><span class="mi">✉️</span> Msgs</div>
+              <div class="ms-item"><span class="mi">📢</span> Ann.</div>
+              <div class="ms-item"><span class="mi">📚</span> Dev.</div>
+              <div class="ms-item"><span class="mi">📋</span> Abs.</div>
+              <div class="ms-item"><span class="mi">📅</span> RDV</div>
+            </div>
+            <!-- Mini Main -->
+            <div class="mockup-main">
+              <div class="mm-topbar">
+                <div class="mm-title">🏠 Tableau de bord</div>
+                <div class="mm-avatar">MA</div>
+              </div>
+              <div class="mm-stats">
+                <div class="mms"><div class="mms-icon">👥</div><div class="mms-num">24</div><div class="mms-lbl">Élèves</div></div>
+                <div class="mms"><div class="mms-icon">📚</div><div class="mms-num">8</div><div class="mms-lbl">Devoirs</div></div>
+                <div class="mms"><div class="mms-icon">📋</div><div class="mms-num">3</div><div class="mms-lbl">Absences</div></div>
+                <div class="mms"><div class="mms-icon">✉️</div><div class="mms-num">5</div><div class="mms-lbl">Msgs</div></div>
+              </div>
+              <div class="mm-cards">
+                <div class="mm-card">
+                  <div class="mm-card-title">✉️ Messages récents</div>
+                  <div class="mm-msg unread">
+                    <div class="mm-msg-av" style="background:#2563EB">FA</div>
+                    <div class="mm-msg-text"><div class="mm-msg-name">Fatima A.</div><div class="mm-msg-sub">Absence jeudi...</div></div>
+                  </div>
+                  <div class="mm-msg">
+                    <div class="mm-msg-av" style="background:#10B981">KM</div>
+                    <div class="mm-msg-text"><div class="mm-msg-name">Prof. Karim</div><div class="mm-msg-sub">Devoir corrigé</div></div>
+                  </div>
+                  <div class="mm-msg unread">
+                    <div class="mm-msg-av" style="background:#F59E0B">SB</div>
+                    <div class="mm-msg-text"><div class="mm-msg-name">Sara B.</div><div class="mm-msg-sub">RDV demain?</div></div>
+                  </div>
+                </div>
+                <div class="mm-card">
+                  <div class="mm-card-title">📢 Annonces</div>
+                  <div class="mm-ann"><div class="mm-ann-dot" style="background:#2563EB;border-radius:2px"></div><div><div class="mm-ann-title">Réunion parents</div><div class="mm-ann-date">15 Mar 2025</div></div></div>
+                  <div class="mm-ann"><div class="mm-ann-dot" style="background:#10B981;border-radius:2px"></div><div><div class="mm-ann-title">Sortie pédagogique</div><div class="mm-ann-date">22 Mar 2025</div></div></div>
+                  <div class="mm-ann"><div class="mm-ann-dot" style="background:#F59E0B;border-radius:2px"></div><div><div class="mm-ann-title">Vacances de printemps</div><div class="mm-ann-date">1 Avr 2025</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Floating badges -->
+        <div class="mockup-notif">
+          <div class="mockup-notif-icon">🔔</div>
+          <div class="mockup-notif-text">
+            <div class="mockup-notif-title">Nouveau message</div>
+            <div class="mockup-notif-sub">Parent Mohamed — il y a 2 min</div>
+          </div>
+        </div>
+        <div class="mockup-badge2">
+          <div class="mockup-badge2-dot"></div>
+          <div class="mockup-badge2-text">✓ 98% satisfaction parents</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TRUSTED BY ===== -->
+<div class="trusted">
+  <div class="trusted-inner">
+    <span class="trusted-label">Utilisé par</span>
+    <div class="trusted-logos">
+      <div class="trusted-logo"><span class="tl-icon">🏫</span> École Al Amal — Meknès</div>
+      <div class="trusted-logo"><span class="tl-icon">📚</span> Lycée Ibn Sina — Fès</div>
+      <div class="trusted-logo"><span class="tl-icon">🎓</span> École Primaire Atlas — Rabat</div>
+      <div class="trusted-logo"><span class="tl-icon">✏️</span> Collège Al Farabi — Casablanca</div>
+      <div class="trusted-logo"><span class="tl-icon">🏛️</span> Institut Tariq Ibn Ziad</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FEATURES ===== -->
+<section class="features" id="features">
+  <div class="section-top reveal">
+    <div class="section-chip">✦ Fonctionnalités</div>
+    <h2 class="section-title">Tout ce dont votre école a besoin</h2>
+    <p class="section-sub">Une suite complète d'outils conçue pour moderniser la vie scolaire et renforcer les liens entre tous les acteurs de l'éducation.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feat-card c1 reveal reveal-d1">
+      <div class="feat-icon i1">✉️</div>
+      <div class="feat-title">Messagerie Instantanée</div>
+      <div class="feat-desc">Canal de communication direct entre parents, professeurs et direction. Historique complet, messages non lus en évidence.</div>
+      <span class="feat-tag t1">Communication</span>
+    </div>
+    <div class="feat-card c2 reveal reveal-d2">
+      <div class="feat-icon i2">📚</div>
+      <div class="feat-title">Gestion des Devoirs</div>
+      <div class="feat-desc">Publiez des devoirs avec matière, classe et date limite. Alertes urgentes automatiques, suivi en temps réel par les parents.</div>
+      <span class="feat-tag t2">Pédagogie</span>
+    </div>
+    <div class="feat-card c3 reveal reveal-d3">
+      <div class="feat-icon i3">📋</div>
+      <div class="feat-title">Suivi des Absences</div>
+      <div class="feat-desc">Enregistrez absences et retards en un clic. Justifications en ligne, statistiques par élève, alertes parents instantanées.</div>
+      <span class="feat-tag t3">Administration</span>
+    </div>
+    <div class="feat-card c4 reveal reveal-d1">
+      <div class="feat-icon i4">📅</div>
+      <div class="feat-title">Rendez-vous Parents-Profs</div>
+      <div class="feat-desc">Planifiez des rencontres facilement. Demandes en ligne, confirmations avec notes, gestion des statuts en temps réel.</div>
+      <span class="feat-tag t4">Organisation</span>
+    </div>
+    <div class="feat-card c5 reveal reveal-d2">
+      <div class="feat-icon i5">📢</div>
+      <div class="feat-title">Tableau d'Annonces</div>
+      <div class="feat-desc">Diffusez réunions, événements, sorties et vacances. Catégorisation par type, filtres intuitifs, archivage automatique.</div>
+      <span class="feat-tag t5">Information</span>
+    </div>
+    <div class="feat-card c6 reveal reveal-d3">
+      <div class="feat-icon i6">👥</div>
+      <div class="feat-title">Gestion Administrative</div>
+      <div class="feat-desc">Tableau de bord direction complet. Gestion des utilisateurs, des élèves, des classes. Accès sécurisé par rôle.</div>
+      <span class="feat-tag t6">Sécurité</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ROLES ===== -->
+<section class="roles" id="roles">
+  <div class="roles-inner">
+    <div class="section-top reveal" style="text-align:left;max-width:none">
+      <div class="section-chip">👤 Rôles</div>
+      <h2 class="section-title">Une plateforme, trois expériences</h2>
+      <p class="section-sub">Chaque utilisateur accède à une interface adaptée à son rôle, ses besoins et ses responsabilités.</p>
+    </div>
+    <div class="roles-grid">
+      <div class="role-card r-dir reveal reveal-d1">
+        <span class="role-avatar">👩‍💼</span>
+        <div class="role-name">Direction</div>
+        <div class="role-sub">Vue globale sur l'établissement, pilotage complet et prise de décision éclairée.</div>
+        <ul class="role-features">
+          <li>Tableau de bord statistiques</li>
+          <li>Gestion des utilisateurs</li>
+          <li>Publication d'annonces officielles</li>
+          <li>Accès à toutes les données</li>
+          <li>Rapports d'activité</li>
+        </ul>
+      </div>
+      <div class="role-card r-prof reveal reveal-d2">
+        <span class="role-avatar">👨‍🏫</span>
+        <div class="role-name">Professeur</div>
+        <div class="role-sub">Outils pédagogiques puissants pour gérer sa classe et communiquer efficacement.</div>
+        <ul class="role-features">
+          <li>Publication de devoirs</li>
+          <li>Saisie des absences</li>
+          <li>Confirmation de rendez-vous</li>
+          <li>Messagerie avec parents</li>
+          <li>Suivi de classe en temps réel</li>
+        </ul>
+      </div>
+      <div class="role-card r-parent reveal reveal-d3">
+        <span class="role-avatar">👨‍👩‍👧</span>
+        <div class="role-name">Parent</div>
+        <div class="role-sub">Restez informé et impliqué dans la scolarité de votre enfant depuis votre téléphone.</div>
+        <ul class="role-features">
+          <li>Suivi absences en temps réel</li>
+          <li>Consultation des devoirs</li>
+          <li>Prise de rendez-vous</li>
+          <li>Messagerie avec l'école</li>
+          <li>Réception des annonces</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATS SECTION ===== -->
+<section class="stats-section">
+  <div class="stats-inner">
+    <div class="stats-item reveal">
+      <div class="stats-num">500<span>+</span></div>
+      <div class="stats-lbl">Écoles actives</div>
+    </div>
+    <div class="stats-item reveal reveal-d1">
+      <div class="stats-num">100K<span>+</span></div>
+      <div class="stats-lbl">Utilisateurs</div>
+    </div>
+    <div class="stats-item reveal reveal-d2">
+      <div class="stats-num">98<span>%</span></div>
+      <div class="stats-lbl">Satisfaction</div>
+    </div>
+    <div class="stats-item reveal reveal-d3">
+      <div class="stats-num">3M<span>+</span></div>
+      <div class="stats-lbl">Messages échangés</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section class="testimonials" id="temoignages">
+  <div class="section-top reveal" style="max-width:1100px;margin:0 auto 56px;text-align:left">
+    <div class="section-chip">💬 Témoignages</div>
+    <h2 class="section-title">Ils nous font confiance</h2>
+    <p class="section-sub">Des écoles marocaines qui ont transformé leur communication avec EcoleCom.</p>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card reveal reveal-d1">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-quote">EcoleCom a complètement transformé notre relation avec les parents. Le taux d'engagement a augmenté de 80% en seulement 3 mois d'utilisation.</div>
+      <div class="testi-author">
+        <div class="testi-av" style="background:#dbeafe">👩‍💼</div>
+        <div>
+          <div class="testi-name">Mme. Rachida Benali</div>
+          <div class="testi-role">Directrice — École Al Amal, Meknès</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal reveal-d2">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-quote">La gestion des devoirs et des absences est devenue si simple. Mes élèves oublient rarement leurs devoirs depuis qu'on utilise EcoleCom.</div>
+      <div class="testi-author">
+        <div class="testi-av" style="background:#d1fae5">👨‍🏫</div>
+        <div>
+          <div class="testi-name">M. Karim Tahiri</div>
+          <div class="testi-role">Professeur Mathématiques — Fès</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal reveal-d3">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-quote">En tant que parent, je suis enfin informé en temps réel. Plus besoin d'attendre les réunions pour savoir comment va mon fils à l'école.</div>
+      <div class="testi-author">
+        <div class="testi-av" style="background:#fef3c7">👨‍👩‍👧</div>
+        <div>
+          <div class="testi-name">M. Ahmed Chraibi</div>
+          <div class="testi-role">Parent d'élève — Casablanca</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA FINAL ===== -->
+<section class="cta-final" id="contact">
+  <div class="cta-box reveal">
+    <h2>Prêt à moderniser votre école ?</h2>
+    <p>Rejoignez des centaines d'établissements marocains qui ont déjà adopté EcoleCom.<br>Démarrez dès aujourd'hui — c'est rapide et simple.</p>
+    <a href="{{ url_for('auth.login') }}">
+      <button class="btn-cta-white">
+        🚀 Accéder à la plateforme →
+      </button>
+    </a>
+    <div class="cta-note">✓ Comptes de démonstration disponibles · ✓ Sans engagement · ✓ Support inclus</div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer id="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="fb-logo">
+        <div class="fb-logo-icon">🏫</div>
+        <span class="fb-name">EcoleCom</span>
+      </div>
+      <p>La plateforme de communication scolaire dédiée aux établissements marocains. Simple, puissante et sécurisée.</p>
+      <div style="margin-top:20px;display:flex;gap:10px">
+        <div style="width:32px;height:32px;background:rgba(255,255,255,0.08);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer">📘</div>
+        <div style="width:32px;height:32px;background:rgba(255,255,255,0.08);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer">🐦</div>
+        <div style="width:32px;height:32px;background:rgba(255,255,255,0.08);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer">📸</div>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Plateforme</h5>
+      <ul>
+        <li><a href="#features">Fonctionnalités</a></li>
+        <li><a href="#roles">Pour qui ?</a></li>
+        <li><a href="{{ url_for('auth.login') }}">Connexion</a></li>
+        <li><a href="{{ url_for('auth.login') }}">Démo</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Établissements</h5>
+      <ul>
+        <li><a href="#">École primaire</a></li>
+        <li><a href="#">Collège</a></li>
+        <li><a href="#">Lycée</a></li>
+        <li><a href="#">Partenaires</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <ul>
+        <li><a href="#">📧 support@ecolecom.ma</a></li>
+        <li><a href="#">📞 +212 5 35 XX XX XX</a></li>
+        <li><a href="#">📍 Meknès, Maroc</a></li>
+        <li><a href="#">💬 Chat en ligne</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-bottom-logo">
+      <span>🏫</span> © 2025 EcoleCom · Tous droits réservés
+    </div>
+    <div style="display:flex;gap:20px;font-size:12px">
+      <a href="#" style="color:rgba(255,255,255,0.4);transition:color .2s" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">Confidentialité</a>
+      <a href="#" style="color:rgba(255,255,255,0.4);transition:color .2s" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">Conditions d'utilisation</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Navbar scroll effect
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Counter animation
+  function animateCounter(el, target, suffix='') {
+    let start = 0;
+    const duration = 2000;
+    const step = (timestamp) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.floor(eased * target) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+  const statsObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const nums = e.target.querySelectorAll('.stats-num');
+        const vals = [[500,'+'],[100,'K+'],[98,'%'],[3,'M+']];
+        nums.forEach((n, i) => {
+          if (vals[i]) animateCounter(n, vals[i][0], vals[i][1]);
+        });
+        statsObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  const statsSection = document.querySelector('.stats-inner');
+  if (statsSection) statsObs.observe(statsSection);
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>

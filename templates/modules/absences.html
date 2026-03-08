@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Absences — EcoleCom{% endblock %}
+{% block page_title %}Absences & Retards{% endblock %}
+{% block page_subtitle %}{% if current_user.role=='parent' %}Suivi de vos enfants{% else %}Gestion des absences{% endif %}{% endblock %}
+{% block topbar_actions %}{% if current_user.role=='professeur' %}<button class="btn btn-primary btn-sm" onclick="openModal('modal-add')">➕ Signaler</button>{% endif %}{% endblock %}
+{% block content %}
+<div class="stats-grid" style="margin-bottom:16px">
+  <div class="stat-card"><div class="stat-icon blue">📋</div><div><div class="stat-number">{{ absences|length }}</div><div class="stat-label">Total</div></div></div>
+  <div class="stat-card"><div class="stat-icon red">🚫</div><div><div class="stat-number">{{ absences|selectattr('type','eq','absence')|list|length }}</div><div class="stat-label">Absences</div></div></div>
+  <div class="stat-card"><div class="stat-icon orange">⏰</div><div><div class="stat-number">{{ absences|selectattr('type','eq','retard')|list|length }}</div><div class="stat-label">Retards</div></div></div>
+  <div class="stat-card"><div class="stat-icon red">❗</div><div><div class="stat-number">{{ absences|rejectattr('justifie')|list|length }}</div><div class="stat-label">Non justifiées</div></div></div>
+</div>
+<div class="card">
+  <div class="card-header"><h3>📋 Liste des absences</h3></div>
+  <div class="table-container">
+    {% if not absences %}
+    <div class="empty-state" style="padding:44px"><div class="empty-icon">✅</div><p>Aucune absence enregistrée</p></div>
+    {% else %}
+    <table>
+      <thead><tr><th>Élève</th><th>Classe</th><th>Type</th><th>Date</th><th>Motif</th><th>Statut</th><th>Actions</th></tr></thead>
+      <tbody>
+      {% for a in absences %}
+      <tr>
+        <td><strong style="font-size:13px">{{ a.eleve.prenom }} {{ a.eleve.nom }}</strong></td>
+        <td><span class="badge badge-gray">{{ a.eleve.classe }}</span></td>
+        <td>{% if a.type=='absence' %}<span class="badge badge-danger">🚫 Absence</span>{% else %}<span class="badge badge-warning">⏰ Retard</span>{% endif %}</td>
+        <td style="font-size:12.5px">{{ a.date.strftime('%d/%m/%Y') }}</td>
+        <td style="font-size:12.5px;color:var(--gray-500);max-width:180px">{{ a.motif or '—' }}</td>
+        <td>{% if a.justifie %}<span class="badge badge-success">✅ Justifiée</span>{% else %}<span class="badge badge-danger">❗ Non justifiée</span>{% endif %}</td>
+        <td>
+          <div style="display:flex;gap:5px">
+          {% if not a.justifie and current_user.role in ['professeur','direction'] %}
+          <form method="POST" action="{{ url_for('absences.justifier', id=a.id) }}"><button class="btn btn-success btn-xs">✅</button></form>
+          {% endif %}
+          {% if current_user.role=='professeur' %}
+          <form method="POST" action="{{ url_for('absences.supprimer', id=a.id) }}" onsubmit="return confirmDelete()"><button class="btn btn-danger btn-xs">🗑️</button></form>
+          {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+</div>
+{% if current_user.role=='professeur' %}
+<div class="modal-overlay" id="modal-add">
+  <div class="modal">
+    <div class="modal-header"><h3>📋 Signaler une absence</h3><button class="btn-close" onclick="closeModal('modal-add')">×</button></div>
+    <form method="POST" action="{{ url_for('absences.ajouter') }}">
+      <div class="modal-body">
+        <div class="form-group"><label class="form-label">Élève</label><select name="eleve_id" class="form-control" required><option value="">-- Choisir --</option>{% for e in eleves %}<option value="{{ e.id }}">{{ e.prenom }} {{ e.nom }} ({{ e.classe }})</option>{% endfor %}</select></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Type</label><select name="type" class="form-control"><option value="absence">🚫 Absence</option><option value="retard">⏰ Retard</option></select></div>
+          <div class="form-group"><label class="form-label">Date</label><input type="date" name="date" class="form-control" value="{{ today }}"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Motif</label><textarea name="motif" class="form-control" rows="3"></textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" onclick="closeModal('modal-add')">Annuler</button>
+        <button type="submit" class="btn btn-primary">📋 Signaler</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
